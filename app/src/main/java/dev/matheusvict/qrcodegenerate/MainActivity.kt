@@ -27,4 +27,12 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    @Preview(showBackground = true)
+    @Composable
+    fun getQrcodeApp() {
+        QrCodeGenerateTheme {
+            QrCodeApp()
+        }
+    }
 }
