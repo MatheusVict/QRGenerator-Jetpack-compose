@@ -1,6 +1,10 @@
 package dev.matheusvict.qrcodegenerate
 
+import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
+import android.os.Parcelable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -30,21 +34,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.common.BitMatrix
 import com.google.zxing.qrcode.QRCodeWriter
 import dev.matheusvict.qrcodegenerate.ui.theme.PurpleGrey80
 import dev.matheusvict.qrcodegenerate.ui.theme.QrCodeGenerateTheme
+import java.io.File
+import java.io.FileOutputStream
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun QrCodeApp() {
+fun QrCodeApp(context: Context? = null) {
     var textValue by remember {
         mutableStateOf(TextFieldValue(""))
     }
@@ -67,7 +73,15 @@ fun QrCodeApp() {
                 Image(
                     bitmap = qrCodeGenerated!!.asImageBitmap(),
                     contentDescription = "",
-                    modifier = Modifier.size(220.dp)
+                    modifier = Modifier.size(220.dp).padding(10.dp)
+                )
+                RoundedButton(
+                    onClick = { context?.let {
+                        shareQrcode(it, textValue.text)
+                    } },
+                    enabled = qrCodeGenerated.toString().isNotEmpty(),
+                    text = "Compartilhar QR CODE",
+                    color = Color.Blue,
                 )
             } else {
                 Icon(
@@ -147,6 +161,33 @@ fun convertMatrixToBitmap(matrix: BitMatrix): Bitmap {
     }
     return bitmap
 }
+
+fun shareQrcode(context: Context, text: String) {
+    val bitmap = generateQrCode(text)
+    val qrCodeUri = saveQrCodeImage(context, bitmap)
+    if (qrCodeUri != null) {
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "image/*"
+            putExtra(Intent.EXTRA_STREAM, qrCodeUri as Parcelable)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        context.startActivity(Intent.createChooser(shareIntent, "Compartilhar QR Code"))
+    }
+}
+
+fun saveQrCodeImage(context: Context, bitmap: Bitmap): Uri? {
+    val imagesFolder = File(context.cacheDir, "qrcodes")
+    if (!imagesFolder.exists()) {
+        imagesFolder.mkdirs()
+    }
+    val file = File(imagesFolder, "qrcode.png")
+    val fileOutputStream = FileOutputStream(file)
+    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream)
+    fileOutputStream.flush()
+    fileOutputStream.close()
+    return FileProvider.getUriForFile(context, context.packageName + ".fileprovider", file)
+}
+
 
 @Composable
 fun RoundedButton(
