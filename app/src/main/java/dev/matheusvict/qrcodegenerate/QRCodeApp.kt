@@ -1,6 +1,7 @@
 package dev.matheusvict.qrcodegenerate
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -45,47 +46,55 @@ fun QrCodeApp() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(horizontal = 20.dp),
+        verticalArrangement = Arrangement.SpaceEvenly
     ) {
-        Text("Gerador de QR Code", textAlign = TextAlign.Center)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("Gerador de QR Code", textAlign = TextAlign.Center)
 
-        Icon(
-            painter = painterResource(id = R.drawable.baseline_qr_code_scanner_24),
-            contentDescription = "",
-            modifier = Modifier.size(200.dp)
-        )
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_qr_code_scanner_24),
+                contentDescription = "",
+                modifier = Modifier.size(200.dp)
+            )
+        }
 
-        TextField(
-            value = textValue,
-            modifier = Modifier
-                .border(
-                    width = 2.dp,
-                    color = PurpleGrey80,
-                    shape = RoundedCornerShape(10.dp)
-                )
-                .fillMaxWidth(),
-            placeholder = {
-                Text(
-                    text = "Entre com um texto",
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            },
-            shape = RoundedCornerShape(10.dp),
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color.White
-            ),
-            onValueChange = {
-                textValue = it
-            })
+        Column {
 
-        Spacer(modifier = Modifier.height(20.dp))
+            TextField(
+                value = textValue,
+                modifier = Modifier
+                    .border(
+                        width = 2.dp,
+                        color = PurpleGrey80,
+                        shape = RoundedCornerShape(10.dp)
+                    )
+                    .fillMaxWidth(),
+                placeholder = {
+                    Text(
+                        text = "Entre com um texto",
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                },
+                shape = RoundedCornerShape(10.dp),
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = Color.White
+                ),
+                onValueChange = {
+                    textValue = it
+                })
 
-        RoundedButton(
-            onClick = { /*TODO*/ },
-            enabled = true,
-            text = "Gerar QR Code",
-            color = Color.Green
-        )
+            Spacer(modifier = Modifier.height(20.dp))
+
+            RoundedButton(
+                onClick = { /*TODO*/ },
+                enabled = true,
+                text = "Gerar QR Code",
+                color = Color.Green
+            )
+        }
     }
 }
 
