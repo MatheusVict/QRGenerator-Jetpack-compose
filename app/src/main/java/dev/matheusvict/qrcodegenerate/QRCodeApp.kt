@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.zxing.BarcodeFormat
+import com.google.zxing.common.BitMatrix
 import com.google.zxing.qrcode.QRCodeWriter
 import dev.matheusvict.qrcodegenerate.ui.theme.PurpleGrey80
 import dev.matheusvict.qrcodegenerate.ui.theme.QrCodeGenerateTheme
@@ -124,6 +125,9 @@ fun QrCodeApp() {
 
 fun generateQrCode(text: String): Bitmap {
     val matrix = QRCodeWriter().encode(text, BarcodeFormat.QR_CODE, 512, 512)
+    return convertMatrixToBitmap(matrix)
+}
+fun convertMatrixToBitmap(matrix: BitMatrix): Bitmap {
     val pixelWidth = matrix.width
     val pixelHeight = matrix.height
 
